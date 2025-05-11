@@ -68,13 +68,9 @@ public:
 	// because it is rendered as "    ABC" on the screen.
 	struct Coordinates
 	{
-		int mLine, mColumn;
+		size_t mLine, mColumn;
 		Coordinates() : mLine(0), mColumn(0) {}
-		Coordinates(int aLine, int aColumn) : mLine(aLine), mColumn(aColumn)
-		{
-			assert(aLine >= 0);
-			assert(aColumn >= 0);
-		}
+		Coordinates(size_t aLine, size_t aColumn) : mLine(aLine), mColumn(aColumn) {}
 		static Coordinates Invalid() { static Coordinates invalid(-1, -1); return invalid; }
 
 		bool operator ==(const Coordinates& o) const
@@ -129,8 +125,8 @@ public:
 	typedef std::string String;
 	typedef std::unordered_map<std::string, Identifier> Identifiers;
 	typedef std::unordered_set<std::string> Keywords;
-	typedef std::map<int, std::string> ErrorMarkers;
-	typedef std::unordered_set<int> Breakpoints;
+	typedef std::map<size_t, std::string> ErrorMarkers;
+	typedef std::unordered_set<size_t> Breakpoints;
 	typedef std::array<ImU32, (unsigned)PaletteIndex::Max> Palette;
 	typedef uint8_t Char;
 
@@ -205,7 +201,7 @@ public:
 	std::string GetSelectedText() const;
 	std::string GetCurrentLineText()const;
 
-	int GetTotalLines() const { return (int)mLines.size(); }
+	size_t GetTotalLines() const { return mLines.size(); }
 	bool IsOverwrite() const { return mOverwrite; }
 
 	void SetReadOnly(bool aValue);
@@ -237,10 +233,10 @@ public:
 	void InsertText(const std::string& aValue);
 	void InsertText(const char* aValue);
 
-	void MoveUp(int aAmount = 1, bool aSelect = false);
-	void MoveDown(int aAmount = 1, bool aSelect = false);
-	void MoveLeft(int aAmount = 1, bool aSelect = false, bool aWordMode = false);
-	void MoveRight(int aAmount = 1, bool aSelect = false, bool aWordMode = false);
+	void MoveUp(size_t aAmount = 1, bool aSelect = false);
+	void MoveDown(size_t aAmount = 1, bool aSelect = false);
+	void MoveLeft(size_t aAmount = 1, bool aSelect = false, bool aWordMode = false);
+	void MoveRight(size_t aAmount = 1, bool aSelect = false, bool aWordMode = false);
 	void MoveTop(bool aSelect = false);
 	void MoveBottom(bool aSelect = false);
 	void MoveHome(bool aSelect = false);
@@ -313,12 +309,12 @@ private:
 	typedef std::vector<UndoRecord> UndoBuffer;
 
 	void ProcessInputs();
-	void Colorize(int aFromLine = 0, int aCount = -1);
-	void ColorizeRange(int aFromLine = 0, int aToLine = 0);
+	void Colorize(size_t aFromLine = 0, size_t aCount = -1);
+	void ColorizeRange(size_t aFromLine = 0, size_t aToLine = 0);
 	void ColorizeInternal();
 	float TextDistanceToLineStart(const Coordinates& aFrom) const;
 	void EnsureCursorVisible();
-	int GetPageSize() const;
+	size_t GetPageSize() const;
 	std::string GetText(const Coordinates& aStart, const Coordinates& aEnd) const;
 	Coordinates GetActualCursorCoordinates() const;
 	Coordinates SanitizeCoordinates(const Coordinates& aValue) const;
@@ -330,14 +326,14 @@ private:
 	Coordinates FindWordStart(const Coordinates& aFrom) const;
 	Coordinates FindWordEnd(const Coordinates& aFrom) const;
 	Coordinates FindNextWord(const Coordinates& aFrom) const;
-	int GetCharacterIndex(const Coordinates& aCoordinates) const;
-	int GetCharacterColumn(int aLine, int aIndex) const;
-	int GetLineCharacterCount(int aLine) const;
-	int GetLineMaxColumn(int aLine) const;
+	size_t GetCharacterIndex(const Coordinates& aCoordinates) const;
+	size_t GetCharacterColumn(size_t aLine, size_t aIndex) const;
+	size_t GetLineCharacterCount(size_t aLine) const;
+	size_t GetLineMaxColumn(size_t aLine) const;
 	bool IsOnWordBoundary(const Coordinates& aAt) const;
-	void RemoveLine(int aStart, int aEnd);
-	void RemoveLine(int aIndex);
-	Line& InsertLine(int aIndex);
+	void RemoveLine(size_t aStart, size_t aEnd);
+	void RemoveLine(size_t aIndex);
+	Line& InsertLine(size_t aIndex);
 	void EnterCharacter(ImWchar aChar, bool aShift);
 	void Backspace();
 	void DeleteSelection();
@@ -353,7 +349,7 @@ private:
 	Lines mLines;
 	EditorState mState;
 	UndoBuffer mUndoBuffer;
-	int mUndoIndex;
+	size_t mUndoIndex;
 
 	int mTabSize;
 	bool mOverwrite;
@@ -366,7 +362,7 @@ private:
 	float mTextStart;                   // position (in pixels) where a code line starts relative to the left of the TextEditor.
 	int  mLeftMargin;
 	bool mCursorPositionChanged;
-	int mColorRangeMin, mColorRangeMax;
+	size_t mColorRangeMin, mColorRangeMax;
 	SelectionMode mSelectionMode;
 	bool mHandleKeyboardInputs;
 	bool mHandleMouseInputs;
